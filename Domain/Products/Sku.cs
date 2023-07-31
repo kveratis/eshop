@@ -6,7 +6,9 @@ namespace Domain.Products;
 public sealed record Sku
 {
     private const int DefaultLength = 15;
+
     private Sku(string value) => Value = value;
+
     public string Value { get; init; }
     
     public static Sku? Create(string value)

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Orders.Create;
 
-public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand>
+public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPublisher _publisher;
@@ -16,13 +16,13 @@ public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderComma
         _publisher = publisher;
     }
 
-    public async Task Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var customer = await _context.Customers.FindAsync(new CustomerId(request.CustomerId), cancellationToken);
+        var customer = await _context.Customers.FindAsync(CustomerId.Create(request.CustomerId), cancellationToken);
 
         if (customer is null)
         {
-            return;
+            return new CreateOrderResponse(string.Empty, false, "Customer Doesn't Exist");
         }
 
         var order = Order.Create(customer.Id);
@@ -32,5 +32,7 @@ public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderComma
         await _context.SaveChangesAsync(cancellationToken);
 
         await _publisher.Publish(new OrderCreatedEvent(order.Id), cancellationToken);
+
+        return new CreateOrderResponse(order.Id.ToString(), true);
     }
 }

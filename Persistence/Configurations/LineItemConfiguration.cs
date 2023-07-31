@@ -13,7 +13,7 @@ internal sealed class LineItemConfiguration : IEntityTypeConfiguration<LineItem>
         
         builder.Property(li => li.Id).HasConversion(
             lineItemId => lineItemId.Value,
-            value => new LineItemId(value));
+            value => LineItemId.Create(value));
 
         builder.HasOne<Product>()
             .WithMany()

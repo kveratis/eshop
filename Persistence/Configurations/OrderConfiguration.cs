@@ -13,7 +13,7 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         
         builder.Property(o => o.Id).HasConversion(
             orderId => orderId.Value,
-            value => new OrderId(value));
+            value => OrderId.Create(value));
 
         builder.HasOne<Customer>()
             .WithMany()

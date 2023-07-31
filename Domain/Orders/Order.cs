@@ -5,7 +5,7 @@ namespace Domain.Orders;
 
 public sealed class Order
 {
-    private readonly HashSet<LineItem> _lineItems = new();
+    private readonly List<LineItem> _lineItems = new();
 
     private Order()
     {
@@ -17,13 +17,13 @@ public sealed class Order
     
     public OrderStatus Status { get; private set; }
 
-    public IReadOnlyList<LineItem> LineItems => _lineItems.ToList().AsReadOnly();
+    public IReadOnlyList<LineItem> LineItems => _lineItems.AsReadOnly();
 
     public static Order Create(Customer customer)
     {
         var order = new Order
         {
-            Id = new OrderId(Guid.NewGuid()),
+            Id = OrderId.Create(),
             CustomerId = customer.Id,
             Status = OrderStatus.Pending,
         };
@@ -35,7 +35,7 @@ public sealed class Order
     {
         var order = new Order
         {
-            Id = new OrderId(Guid.NewGuid()),
+            Id = OrderId.Create(),
             CustomerId = customerId,
             Status = OrderStatus.Pending,
         };
@@ -46,7 +46,7 @@ public sealed class Order
     public void Add(Product product)
     {
         var lineItem = new LineItem(
-            new LineItemId(Guid.NewGuid()), 
+            LineItemId.Create(), 
             Id, 
             product.Id, 
             product.Price);
@@ -57,7 +57,7 @@ public sealed class Order
     public void Add(ProductId productId, Money price)
     {
         var lineItem = new LineItem(
-            new LineItemId(Guid.NewGuid()),
+            LineItemId.Create(),
             Id,
             productId,
             price);

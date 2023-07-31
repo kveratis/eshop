@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  eshop.api:
+    image: ${DOCKER_REGISTRY-}webapi
+    container_name: eshop-api
+    build:
+      context: .
+      dockerfile: Web.API/Dockerfile
+    depends_on:
+        - eshop.db
+
+  eshop.db:
+    image: postgres:14
+    container_name: eshop-db
+    environment:
+      - POSTGRES_DB=eshop
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/db:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 5002:8080
+    depends_on:
+        - eshop.db
+

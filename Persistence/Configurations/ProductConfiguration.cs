@@ -12,8 +12,8 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(p => p.Id).HasConversion(
             productId => productId.Value,
-            value => new ProductId(value));
-        
+            value => ProductId.Create(value));
+            
         builder.Property(p => p.Sku).HasConversion(
             sku => sku.Value,
             value => Sku.Create(value)!);
